@@ -1,0 +1,49 @@
+{
+
+   TODO: 
+   {
+      Validate code and test. 
+      I think I have all the required logic implemented now, however, make sure.
+   }
+
+
+	See the textbook for implementation help:
+		Computer Networks: A Systems Approach >> pg. 143
+
+
+	Main.java line 89: at this conditional block, maybe add an else case for if no static
+	routing table provided <- YES
+
+	in Router.handlePacket(): detect RIP packets and call ripPacketHandler(), which you will create,
+	 to update the route table
+	 __________________________
+	 Main.java
+        ↓
+     Router.startRIP()
+        ↓
+     - initialize routes
+     - send RIP request
+     - start periodic thread
+
+     Router.handlePacket()
+        ↓
+     - detect RIP packets
+     - update routing table
+     ___________________________
+
+     {
+         In Router.java, you could have something like:
+
+         startRIP()
+         initializeDirectRoutes()
+         sendRipRequestAllInterfaces()
+         sendRipResponseAllInterfaces()
+         expireStaleRipRoutes()
+
+         Then startRIP() would:
+
+         initialize direct routes
+         send initial RIP requests
+         schedule a timer task every 10 seconds
+    }
+}
