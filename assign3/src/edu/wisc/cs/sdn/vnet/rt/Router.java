@@ -221,7 +221,7 @@ public class Router extends Device
 		if (ipPkt.getProtocol() == IPv4.PROTOCOL_UDP)
 		{
 			UDP udp = (UDP) ipPkt.getPayload();
-			if (udp.getSourcePort() == UDP.RIP_PORT || udp.getDestinationPort() == UDP.RIP_PORT)
+			if (udp.getDestinationPort() == UDP.RIP_PORT)
 			{
 				RIPv2 rip = (RIPv2) udp.getPayload();
 				if (rip.getCommand() == RIPv2.COMMAND_REQUEST)
@@ -259,6 +259,11 @@ public class Router extends Device
 		if (bestRoute == null) return;
 
 		Iface outIface = bestRoute.getInterface();
+
+		if (outIface == inIface)
+		{
+			return;
+		}
 
 		// Determine next-hop IP (gateway or direct)
 		int nextHopIp = bestRoute.getGatewayAddress();
