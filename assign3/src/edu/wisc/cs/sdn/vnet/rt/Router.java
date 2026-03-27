@@ -448,27 +448,38 @@ public class Router extends Device
 
 	public Ethernet buildRIPRequest(Iface inIface)
 	{
-		// Create a RIPv2 packet
+		// Create a RIPv2 request packet
 		RIPv2 ripRequest = new RIPv2();
 		ripRequest.setCommand(RIPv2.COMMAND_REQUEST);
 
-		// encapsulate it in a UDP packet
+		// Add one wildcard entry requesting the full routing table
+		RIPv2Entry entry = new RIPv2Entry();
+		entry.setAddressFamily((short) 0);
+		entry.setRouteTag((short) 0);
+		entry.setAddress(0);
+		entry.setSubnetMask(0);
+		entry.setNextHopAddress(0);
+		entry.setMetric(16);
+		ripRequest.addEntry(entry);
+
+		// Encapsulate in UDP
 		UDP udp = new UDP();
 		udp.setSourcePort(UDP.RIP_PORT);
 		udp.setDestinationPort(UDP.RIP_PORT);
 		udp.setPayload(ripRequest);
 
-		//encapsulate in an IPv4 packet with the appropriate source and destination IP addresses
+		// Encapsulate in IPv4
 		IPv4 ip = new IPv4();
 		ip.setSourceAddress(inIface.getIpAddress());
-		ip.setDestinationAddress(IPv4.toIPv4Address("224.0.0.9")); // RIP multicast address
+		ip.setDestinationAddress(IPv4.toIPv4Address("224.0.0.9"));
 		ip.setProtocol(IPv4.PROTOCOL_UDP);
 		ip.setPayload(udp);
 
-		//encapsulate the UDP packet in an Ethernet frame with the appropriate source and destination MAC addresses
+		// Encapsulate in Ethernet
 		Ethernet ether = new Ethernet();
 		ether.setSourceMACAddress(inIface.getMacAddress().toBytes());
-		ether.setDestinationMACAddress(MACAddress.valueOf("FF:FF:FF:FF:FF:FF").toBytes()); // Broadcast MAC address
+		ether.setDestinationMACAddress(
+			MACAddress.valueOf("FF:FF:FF:FF:FF:FF").toBytes());
 		ether.setEtherType(Ethernet.TYPE_IPv4);
 		ether.setPayload(ip);
 
