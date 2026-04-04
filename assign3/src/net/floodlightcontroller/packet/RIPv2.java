@@ -27,8 +27,43 @@ public class RIPv2 extends BasePacket
 	public void setEntries(List<RIPv2Entry> entries)
 	{ this.entries = entries; }
 
+    /* 
+     *  Added by Benjamin Fleckenstein (bfleckenstei@wisc.edu) 
+     *  
+     *  Replaces an existing entry by address otherwise adds a new entry.
+     *  @param entry the RIPv2Entry to add or replace
+     *
+    */
+    public void replaceEntry(RIPv2Entry entry)
+    { 
+        for (int i = 0; i < this.entries.size(); i++)
+        {
+            if (this.entries.get(i).getAddress() == entry.getAddress()  
+                && this.entries.get(i).getSubnetMask() == entry.getSubnetMask())
+            {
+                this.entries.set(i, entry);
+                return;
+            }
+        }
+        this.entries.add(entry); 
+    }
+
 	public List<RIPv2Entry> getEntries()
 	{ return this.entries; }
+
+    /* Added by Benjamin Fleckenstein (bfleckenstei@wisc.edu) 
+     * @param address the destination address of the entry to find
+     * @param mask the subnet mask of the entry to find
+    */
+    public RIPv2Entry find(int address, int mask)
+    {
+        for (RIPv2Entry entry : this.entries)
+        {
+            if ((entry.getAddress()) == address && entry.getSubnetMask() == mask)
+            { return entry; }
+        }
+        return null;
+    }
 
     public void addEntry(RIPv2Entry entry)
     { this.entries.add(entry); }

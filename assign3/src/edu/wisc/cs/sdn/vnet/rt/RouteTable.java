@@ -27,7 +27,27 @@ public class RouteTable
 	 */
 	public RouteTable()
 	{ this.entries = new LinkedList<RouteEntry>(); }
-	
+
+	/* Added by Benjamin Fleckenstein (bfleckenstei@wisc.edu) 
+	 *
+	 * Finds the route entry that exactly matches a given subnet and subnet mask.
+	 * Not to be mistaken with lookup(), which finds the best matching route entry for a given IP address.
+	*/
+	public RouteEntry findEntry(int subnet, int subnetMask)
+	{
+		synchronized(this.entries)
+		{
+			for (RouteEntry entry : this.entries)
+			{
+				if (entry.getDestinationAddress() == subnet && entry.getMaskAddress() == subnetMask)
+				{
+					return entry;
+				}
+			}
+			return null;
+		}
+	}
+
 	/**
 	 * Lookup the route entry that matches a given IP address.
 	 * @param ip IP address
@@ -241,4 +261,8 @@ public class RouteTable
 			return result;
 		}
 	}
+
+	/* Added by Benjamin Fleckenstein (bfleckenstei@wisc.edu) */
+	public List<RouteEntry> getEntries()
+	{ return this.entries; }
 }

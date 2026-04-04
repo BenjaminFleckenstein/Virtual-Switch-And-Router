@@ -1,49 +1,30 @@
 {
-
    TODO: 
    {
-      Validate code and test. 
-      I think I have all the required logic implemented now, however, make sure.
+      Verify correctness
    }
 
+   Workflow: 
+   {
+      1. Implement startRIP()
+      2. Time out route table entries for which an update has not been received for more than 30 seconds.
+      3. Implement handleRIPPacket
+   }
 
-	See the textbook for implementation help:
+   RIP Packet Format:
+   {
+      The RIPv2 and RIPv2Entry classes in the net.floodlightcontroller.packet package define the format
+      for RIPv2 packets. All RIPv2 packets should be encapsulated in UDP packets whose source and destination
+      ports are 520 (defined as a constant RIP PORT in the UDP class). When sending RIP requests and unsolicited
+      RIP responses, the destination IP address should be the multicast IP address reserved for RIP (224.0.0.9)
+      and the destination Ethernet address should be the broadcast MAC address (FF:FF:FF:FF:FF:FF). When
+      sending a RIP response for a specific RIP request, the destination IP address and destination Ethernet
+      address should be the IP address and MAC address of the router interface that sent the request
+   }
+
+   See:
+   {
+	See the textbook for distance-vector implementation algorithm:
 		Computer Networks: A Systems Approach >> pg. 143
-
-
-	Main.java line 89: at this conditional block, maybe add an else case for if no static
-	routing table provided <- YES
-
-	in Router.handlePacket(): detect RIP packets and call ripPacketHandler(), which you will create,
-	 to update the route table
-	 __________________________
-	 Main.java
-        ↓
-     Router.startRIP()
-        ↓
-     - initialize routes
-     - send RIP request
-     - start periodic thread
-
-     Router.handlePacket()
-        ↓
-     - detect RIP packets
-     - update routing table
-     ___________________________
-
-     {
-         In Router.java, you could have something like:
-
-         startRIP()
-         initializeDirectRoutes()
-         sendRipRequestAllInterfaces()
-         sendRipResponseAllInterfaces()
-         expireStaleRipRoutes()
-
-         Then startRIP() would:
-
-         initialize direct routes
-         send initial RIP requests
-         schedule a timer task every 10 seconds
-    }
+   }
 }
