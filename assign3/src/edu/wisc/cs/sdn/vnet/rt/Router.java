@@ -3,7 +3,7 @@ package edu.wisc.cs.sdn.vnet.rt;
 import edu.wisc.cs.sdn.vnet.Device;
 import edu.wisc.cs.sdn.vnet.DumpFile;
 import edu.wisc.cs.sdn.vnet.Iface;
-
+import net.floodlightcontroller.packet.ARP;
 import net.floodlightcontroller.packet.Ethernet;
 import net.floodlightcontroller.packet.IPv4;
 import net.floodlightcontroller.packet.MACAddress;
@@ -127,9 +127,16 @@ public class Router extends Device
 		System.out.println("*** -> Received packet: " +
 				etherPacket.toString().replace("\n", "\n\t"));
 
-		// Check if packet is IPv4
+		// ARP packet
+		if (etherPacket.getEtherType() == Ethernet.TYPE_ARP)
+		{
+			arpHandler(etherPacket);
+			return;
+		}
+		
 		if (etherPacket.getEtherType() != Ethernet.TYPE_IPv4) return;
 
+		// IPv4 packet
 		IPv4 ipPkt = (IPv4) etherPacket.getPayload();
 
 		// Verify IPv4 header checksum
@@ -200,6 +207,51 @@ public class Router extends Device
 		etherPacket.setSourceMACAddress(outIface.getMacAddress().toBytes());
 
 		this.sendPacket(etherPacket, outIface);
+	}
+
+	private void arpHandler(Ethernet etherPacket)
+	{
+		ARP arpPacket = (ARP) etherPacket.getPayload();
+
+			/* Learn from any ARP packet we receive */
+			int senderIp = IPv4.toIPv4Address(arpPacket.getSenderProtocolAddress());
+			MACAddress senderMac = MACAddress.valueOf(arpPacket.getSenderHardwareAddress());
+			this.arpCache.insert(senderMac, senderIp);
+
+			/* If this is an ARP request for one of our interfaces, reply */
+			if (arpPacket.getOpCode() == ARP.OP_REQUEST)
+			{
+				int targetIp = IPv4.toIPv4Address(arpPacket.getTargetProtocolAddress());
+
+				for (Iface iface : this.interfaces.values())
+				{
+					if (iface.getIpAddress() == targetIp)
+					{
+						Ethernet ether = new Ethernet();
+						ether.setEtherType(Ethernet.TYPE_ARP);
+						ether.setSourceMACAddress(iface.getMacAddress().toBytes());
+						ether.setDestinationMACAddress(etherPacket.getSourceMACAddress());
+
+						ARP arpReply = new ARP();
+						arpReply.setHardwareType(ARP.HW_TYPE_ETHERNET);
+						arpReply.setProtocolType(ARP.PROTO_TYPE_IP);
+						arpReply.setHardwareAddressLength(
+								(byte) Ethernet.DATALAYER_ADDRESS_LENGTH);
+						arpReply.setProtocolAddressLength((byte) 4);
+						arpReply.setOpCode(ARP.OP_REPLY);
+
+						arpReply.setSenderHardwareAddress(iface.getMacAddress().toBytes());
+						arpReply.setSenderProtocolAddress(iface.getIpAddress());
+						arpReply.setTargetHardwareAddress(arpPacket.getSenderHardwareAddress());
+						arpReply.setTargetProtocolAddress(arpPacket.getSenderProtocolAddress());
+
+						ether.setPayload(arpReply);
+
+						sendPacket(ether, iface);
+						return;
+					}
+				}
+			}
 	}
 
 	/**
