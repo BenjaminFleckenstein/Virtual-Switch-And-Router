@@ -277,8 +277,27 @@ public class Router extends Device
 			}
 			else
 			{
-				if (this.routeTable.findEntry(subnet, subnetMask).getGatewayAddress() == 0)
-				continue; // ignore directly connected routes
+				RouteEntry routeEntry = this.routeTable.findEntry(subnet, subnetMask);
+
+				if (routeEntry == null)
+				{
+					// RouteTable entry may expire before corresponding RIP table entry.
+					if (senderMetric + 1 >= RIP_INFINITY)
+					{
+						continue; // Route is still unreachable
+					}
+					else
+					{
+						thisDestination.setMetric(senderMetric + 1);
+					}
+					this.routeTable.insert(subnet, extractIPFromPacket(etherPacket).getSourceAddress(), subnetMask, inIface);
+					this.ripTable.replaceEntry(thisDestination);
+					this.routeTimestamps.put(routeKey, System.currentTimeMillis());
+					continue;
+				}
+
+				if (routeEntry.getGatewayAddress() == 0)
+					continue; // ignore directly connected routes
 
 				// Existing destination: update if sender's metric + 1 is better than current metric
 				if (senderMetric + 1 < thisDestination.getMetric())
@@ -297,7 +316,7 @@ public class Router extends Device
 					//update timestamp for this route for future expiration
 					this.routeTimestamps.put(routeKey, System.currentTimeMillis());
 				} 
-				else if (this.routeTable.findEntry(subnet, subnetMask).getGatewayAddress() == extractIPFromPacket(etherPacket).getSourceAddress())
+				else if (routeEntry.getGatewayAddress() == extractIPFromPacket(etherPacket).getSourceAddress())
 				{
 					if (senderMetric + 1 >= RIP_INFINITY)
 					{
@@ -468,7 +487,7 @@ public class Router extends Device
 			long timestamp = entry.getValue();
 			if (currentTime - timestamp > 30000) //expire routes that haven't been updated in 30 seconds
 			{
-				this.routeTable.remove(destination, mask);
+				this.routeTable.remove(destination, mask); //TODO: CAUSES NULLPTREXCEPTION
 				this.ripTable.replaceEntry(new RIPv2Entry(destination, mask, RIP_INFINITY)); //set metric to infinity in RIP table instead of deleting, to notify neighbors of unreachable route
 				it.remove();
 			}

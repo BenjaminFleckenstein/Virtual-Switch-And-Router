@@ -1,7 +1,8 @@
 {
    TODO: 
    {
-      Verify correctness
+      NULLPTREXCEPTION: when expiring stale routes, route is removed immediately while rip entry remains.
+      Add a check to mergeRIP() that either checks if rip entry expired or route doesn't exist. Something like that.
    }
 
    Workflow: 
