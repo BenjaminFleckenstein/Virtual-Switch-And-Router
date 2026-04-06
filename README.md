@@ -4,12 +4,21 @@
 
 ---
 ### Overview
-This project was part of my *Comp Sci 640 - Introduction To Computer Networks* course at The University of Wisconsin-Madison. This project was built over the span of several weeks, as more features were added throughout the semester.
+Implemented a software-based network switch and router in Java using a Mininet and POX simulation environment.
 
-The main goals and learning targets of this project were as follows:
-- Implement Layer 2 switching logic including MAC address learning and packet forwarding.
-- Design a virtual router using longest prefix match for IP routing decisions and distance-vector routing protocol.
-- Analyze interface traffic and routing behavior to validate correct packet delivery.
+This project includes:
+- Layer 2 switching with MAC address learning and packet forwarding
+- Layer 3 routing using longest prefix match
+- Dynamic routing using a distance-vector protocol (RIP)
+
+Through this project, I developed a deep understanding of packet forwarding, routing behavior, and debugging network systems.
+---
+### Key Concepts Demonstrated
+- Packet forwarding at both Layer 2 and Layer 3
+- Longest prefix match routing
+- Distance-vector routing (RIP)
+- Debugging distributed network systems
+- Working with network simulation tools (Mininet, POX)
 
 ---
 ### How To Run The Simulations:
@@ -36,14 +45,14 @@ Setup:
     ```
 3. Start Mininet
     ```
-    cd ~cs640-a3/assign3
+    cd ~/cs640-a3/assign3
     sudo ./run_mininet.py topos/<topology>.topo -a
     // replace <topology> with your desired network topology to simulate
     // see cs640-a3/assign3/topos for different provided topologies
     ```
 4. Start routers/switches
     ```
-    cd ~cs640-a3/assign3
+    cd ~/cs640-a3/assign3
     ant
     java -jar VirtualNetwork.jar -v <router> -a arp_cache //router
     java -jar VirtualNetwork.jar -v <switch> //switch
@@ -51,6 +60,21 @@ Setup:
     // see cs640-a3/assign3/topos for different provided topologies
     // open a new shell session for each router/switch
     ```
+
+#### Example:
+To run the triangle topology with 3 routers:
+
+Terminal 1 (Mininet):
+```sudo ./run_mininet.py topos/triangle_rt.topo -a```
+
+Terminal 2 (POX):
+```./run_pox.sh```
+
+Terminal 3–5 (Routers):
+```java -jar VirtualNetwork.jar -v r1 -a arp_cache```
+```java -jar VirtualNetwork.jar -v r2 -a arp_cache```
+```java -jar VirtualNetwork.jar -v r3 -a arp_cache```
+
 ---
 Now that you have your virtual network set up, you can send packets across the network. From your terminal running Mininet, send ping requests from host to host. Watch your terminals running each router/switch as they send and receive packets in real time.
 ```
@@ -62,13 +86,14 @@ While simulating a router topology with at least 3 routers, try killing one rout
 ---
 ### Source Code:
 The source code for routing and switching logic can be found in:
+
     ~/cs640/projects/cs640-a3/assign3/src/edu/wisc/cs/sdn/vnet/*
     
     &
     
     ~/cs640/projects/cs640-a3/assign3/src/net/floodlightcontroller/packet/*
 
-The most interesting files, where routing/switching protocol and packet forwarding logic are defined, are named "Switch.java" & "Router.java".
+The most interesting files, where routing/switching protocol and packet forwarding logic are defined, are named `Switch.java` & `Router.java`.
 
 ---
 ### Other Notes:
