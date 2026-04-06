@@ -32,13 +32,13 @@ Required tools:
 Setup:
 1. Symlink POX
     ```
-    cd ~cs640-a3/assign3
+    cd ~/cs640-a3/assign3
     ln -s ~/pox
     ./config.sh
     ```
 2. Start POX controller
     ```
-    cd ~cs640-a3/assign3
+    cd ~/cs640-a3/assign3
     ./run_pox.sh
     ...
     connected
