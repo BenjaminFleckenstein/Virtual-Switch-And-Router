@@ -1,4 +1,4 @@
-# Software-Based Router And Switch Implementation
+# Virtual Switch And Router Implementation
 ## **Author**: Benjamin Fleckenstein
 ## **Email**: bflec27@gmail.com    |   University: bfleckenstei@wisc.edu
 
@@ -32,13 +32,13 @@ Required tools:
 Setup:
 1. Symlink POX
     ```
-    cd ~/cs640-a3/assign3
+    cd ~/Virtual-Switch-And-Router/assign3
     ln -s ~/pox
     ./config.sh
     ```
 2. Start POX controller
     ```
-    cd ~/cs640-a3/assign3
+    cd ~/Virtual-Switch-And-Router/assign3
     ./run_pox.sh
     ...
     connected
@@ -46,19 +46,19 @@ Setup:
     ```
 3. Start Mininet
     ```
-    cd ~/cs640-a3/assign3
+    cd ~/Virtual-Switch-And-Router/assign3
     sudo ./run_mininet.py topos/<topology>.topo -a
     // replace <topology> with your desired network topology to simulate
-    // see cs640-a3/assign3/topos for different provided topologies
+    // see Virtual-Switch-And-Router/assign3/topos for different provided topologies
     ```
 4. Start routers/switches
     ```
-    cd ~/cs640-a3/assign3
+    cd ~/Virtual-Switch-And-Router/assign3
     ant
     java -jar VirtualNetwork.jar -v <router> -a arp_cache //router
     java -jar VirtualNetwork.jar -v <switch> //switch
     // replace <router>/<switch> with desired router or switch (ex: r1, s1, r2, s2, r3, s3, etc.)
-    // see cs640-a3/assign3/topos for different provided topologies
+    // see Virtual-Switch-And-Router/assign3/topos for different provided topologies
     // open a new shell session for each router/switch
     ```
 
@@ -85,7 +85,7 @@ Terminal 3–5 (Routers):
 Now that you have your virtual network set up, you can send packets across the network. From your terminal running Mininet, send ping requests from host to host. Watch your terminals running each router/switch as they send and receive packets in real time.
 ```
 <sender host name (example: h1)> ping -c <# ping messages> <receiver IP>
-// see cs640-a3/assign3/topos for different provided topologies
+// see Virtual-Switch-And-Router/assign3/topos for different provided topologies
 ```
 While simulating a router topology with at least 3 routers, try killing one router process (via ```ctrl+c```) and observe as the packets reroute.
 
@@ -93,11 +93,11 @@ While simulating a router topology with at least 3 routers, try killing one rout
 ### Source Code:
 The source code for routing and switching logic can be found in:
 
-    ~/cs640/projects/cs640-a3/assign3/src/edu/wisc/cs/sdn/vnet/*
+    ~/cs640/projects/Virtual-Switch-And-Router/assign3/src/edu/wisc/cs/sdn/vnet/*
     
     &
     
-    ~/cs640/projects/cs640-a3/assign3/src/net/floodlightcontroller/packet/*
+    ~/cs640/projects/Virtual-Switch-And-Router/assign3/src/net/floodlightcontroller/packet/*
 
 The most interesting files, where routing/switching protocol and packet forwarding logic are defined, are named `Switch.java` & `Router.java`.
 
@@ -107,4 +107,4 @@ The most interesting files, where routing/switching protocol and packet forwardi
 - Make sure you are running the routers/switches corresponding to the topology you are simulating.
 - You must run 1 instance per device.
 - Some of the code in this project was provided by instructors. Our main focus in this course was to implement the routing and switching protocols, as well as packet forwarding logic.
-- This README.md was last updated on 4.5.2026.
+- This README.md was last updated on the 6th of April, 2026.
