@@ -539,7 +539,7 @@ public class Router extends Device
 			long timestamp = entry.getValue();
 			if (currentTime - timestamp > 30000) //expire routes that haven't been updated in 30 seconds
 			{
-				this.routeTable.remove(destination, mask); //TODO: CAUSES NULLPTREXCEPTION
+				this.routeTable.remove(destination, mask);
 				this.ripTable.replaceEntry(new RIPv2Entry(destination, mask, RIP_INFINITY)); //set metric to infinity in RIP table instead of deleting, to notify neighbors of unreachable route
 				it.remove();
 			}
