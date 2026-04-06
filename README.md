@@ -12,6 +12,7 @@ This project includes:
 - Dynamic routing using a distance-vector protocol (RIP)
 
 Through this project, I developed a deep understanding of packet forwarding, routing behavior, and debugging network systems.
+
 ---
 ### Key Concepts Demonstrated
 - Packet forwarding at both Layer 2 and Layer 3
@@ -65,14 +66,19 @@ Setup:
 To run the triangle topology with 3 routers:
 
 Terminal 1 (Mininet):
+
 ```sudo ./run_mininet.py topos/triangle_rt.topo -a```
 
 Terminal 2 (POX):
+
 ```./run_pox.sh```
 
 Terminal 3–5 (Routers):
+
 ```java -jar VirtualNetwork.jar -v r1 -a arp_cache```
+
 ```java -jar VirtualNetwork.jar -v r2 -a arp_cache```
+
 ```java -jar VirtualNetwork.jar -v r3 -a arp_cache```
 
 ---
